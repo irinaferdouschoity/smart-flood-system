@@ -1,0 +1,582 @@
+/* Smart Flood Monitoring - shared look for the city dashboard and the Bangladesh page.
+   Idea: a river-gauge control room. Ink sidebar, pale floodplain page, one teal action colour,
+   and the four risk colours reserved for risk only. */
+
+:root {
+    color-scheme: light;
+
+    --ink: #0c2b3a;          /* sidebar, strongest text */
+    --page: #edf2f0;         /* floodplain */
+    --paper: #fbfcfb;
+    --text: #17323f;
+    --muted: #5a707b;
+    --rule: #cfd9d5;
+    --rule-soft: #e0e8e4;
+    --teal: #0e7c86;         /* actions and links */
+    --teal-bright: #5fd0d8;
+    --amber: #d98a1f;
+    --slate: #5b7c99;
+
+    --low: #3f9b6b;
+    --moderate: #e3a72f;
+    --high: #e36b2c;
+    --very-high: #b8282f;
+
+    --font-head: "Bricolage Grotesque", Bahnschrift, "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Public Sans", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+}
+
+/* Dark theme: used when the computer is set to dark (unless the visitor chose light) or when dark is chosen. */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        color-scheme: dark;
+            --ink: #07161e;
+        --page: #0b1a22;
+        --paper: #102530;
+        --text: #dce8ec;
+        --muted: #95aab3;
+        --rule: #243d4b;
+        --rule-soft: #1a303c;
+        --teal: #4cc3cc;
+        --teal-bright: #7fdde4;
+        --amber: #f0aa4a;
+        --slate: #8fb0cc;
+
+        --low: #55b784;
+        --moderate: #eab94a;
+        --high: #f08246;
+        --very-high: #e5484f;
+    }
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+        --ink: #07161e;
+        --page: #0b1a22;
+        --paper: #102530;
+        --text: #dce8ec;
+        --muted: #95aab3;
+        --rule: #243d4b;
+        --rule-soft: #1a303c;
+        --teal: #4cc3cc;
+        --teal-bright: #7fdde4;
+        --amber: #f0aa4a;
+        --slate: #8fb0cc;
+
+        --low: #55b784;
+        --moderate: #eab94a;
+        --high: #f08246;
+        --very-high: #e5484f;
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+}
+
+a { color: var(--teal); }
+
+:focus-visible {
+    outline: 3px solid var(--teal-bright);
+    outline-offset: 2px;
+}
+
+/* ---------- shell: sidebar + content ---------- */
+
+.shell {
+    display: grid;
+    grid-template-columns: 268px minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+.rail {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    padding: 26px 20px;
+    background: var(--ink);
+    color: #d6e5ea;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.brand svg { flex: none; }
+
+.brand b {
+    display: block;
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+}
+
+.brand span {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 1.3;
+    color: #9fbac4;
+}
+
+.nav { display: grid; gap: 4px; }
+
+.nav a {
+    display: block;
+    padding: 9px 12px;
+    border-radius: 6px;
+    color: #d6e5ea;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.nav a:hover { background: rgba(255, 255, 255, 0.07); }
+
+.nav a[aria-current="page"] {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    box-shadow: inset 3px 0 0 var(--teal-bright);
+}
+
+.controls { display: grid; gap: 12px; }
+
+.controls label {
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+    color: #9fbac4;
+}
+
+.rail select,
+.rail .button {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 12px;
+    font: inherit;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.rail select option,
+.rail select optgroup { color: #17323f; background: #fff; }
+
+.button {
+    cursor: pointer;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+}
+
+.button.primary {
+    background: var(--teal-bright);
+    border-color: var(--teal-bright);
+    color: #06323a;
+}
+
+.button.primary:hover { filter: brightness(1.06); }
+.button.quiet:hover { background: rgba(255, 255, 255, 0.12); }
+.button:disabled { opacity: 0.55; cursor: progress; }
+
+#status {
+    min-height: 2.8em;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #b6cdd5;
+}
+
+#status[data-state="error"] { color: #ffb4a9; }
+
+.rail-note {
+    margin-top: auto;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #8aa6b0;
+}
+
+.content {
+    padding: 30px clamp(20px, 3.4vw, 52px) 56px;
+    max-width: 1320px;
+    width: 100%;
+}
+
+/* ---------- the reading: place, risk and the gauge ---------- */
+
+.reading {
+    display: grid;
+    gap: 14px;
+    padding-bottom: 26px;
+    border-bottom: 1px solid var(--rule);
+}
+
+.place {
+    margin: 0;
+    font-family: var(--font-head);
+    font-size: clamp(28px, 4.2vw, 46px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+.lede { margin: 0; color: var(--muted); max-width: 70ch; }
+
+.verdict {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.verdict .label { color: var(--muted); font-size: 14px; }
+
+#risk {
+    text-transform: lowercase;          /* shown as "Very high", not "VERY HIGH" */
+    font-family: var(--font-head);
+    font-size: clamp(34px, 5.4vw, 60px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--muted);
+}
+
+#risk::first-letter { text-transform: uppercase; }
+
+.reading[data-level="1"] #risk { color: var(--low); }
+.reading[data-level="2"] #risk { color: var(--moderate); }
+.reading[data-level="3"] #risk { color: var(--high); }
+.reading[data-level="4"] #risk { color: var(--very-high); }
+
+.gauge {
+    --level: 0;
+    position: relative;
+    max-width: 680px;
+    padding-top: 16px;
+}
+
+.gauge .zones {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+}
+
+.gauge .zone { height: 12px; border-radius: 2px; }
+.gauge .zone:nth-child(1) { background: var(--low); }
+.gauge .zone:nth-child(2) { background: var(--moderate); }
+.gauge .zone:nth-child(3) { background: var(--high); }
+.gauge .zone:nth-child(4) { background: var(--very-high); }
+
+.gauge .names {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--muted);
+}
+
+.gauge .marker {
+    position: absolute;
+    top: 0;
+    left: calc((var(--level) - 0.5) * 25%);
+    width: 0;
+    height: 0;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 12px solid var(--text);
+    opacity: 0;
+    transition: left 0.5s cubic-bezier(0.3, 0.8, 0.3, 1), opacity 0.2s;
+}
+
+.reading:not([data-level="0"]) .gauge .marker { opacity: 1; }
+
+/* ---------- key numbers ---------- */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    border-bottom: 1px solid var(--rule);
+}
+
+.stats > div {
+    padding: 18px 22px 18px 0;
+    margin-right: 22px;
+    border-right: 1px solid var(--rule);
+}
+
+.stats > div:last-child { border-right: 0; margin-right: 0; }
+
+.stats small { display: block; color: var(--muted); font-size: 13px; }
+
+.stats strong {
+    display: block;
+    font-family: var(--font-head);
+    font-size: clamp(22px, 2.2vw, 28px);
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.stats #rainfallDetails { margin-top: 2px; line-height: 1.35; }
+
+/* ---------- sections ---------- */
+
+.board {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
+    gap: 30px 40px;
+    padding-top: 26px;
+}
+
+.stack { display: grid; gap: 26px; align-content: start; }
+
+.charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+    padding-top: 30px;
+}
+
+.block { min-width: 0; }
+
+.block h2 {
+    margin: 0 0 12px;
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -0.005em;
+}
+
+.block + .block, .wide { margin-top: 0; }
+.wide { padding-top: 30px; }
+
+#map {
+    height: 470px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--rule-soft);
+}
+
+.charts canvas { max-width: 100%; max-height: 230px; }
+
+#haor-result h3 {
+    margin: 0 0 8px;
+    font-family: var(--font-head);
+    font-size: 17px;
+    font-weight: 650;
+}
+
+#haor-result p {
+    margin: 0;
+    padding: 7px 0;
+    border-top: 1px solid var(--rule-soft);
+    max-width: 62ch;
+}
+
+#haor-result h3 + p { border-top: 0; }
+
+.empty { color: var(--muted); }
+
+.timeline { list-style: none; margin: 0; padding: 0; }
+
+.timeline li {
+    position: relative;
+    margin-left: 5px;
+    padding: 0 0 16px 18px;
+    border-left: 2px solid var(--rule);
+}
+
+.timeline li:last-child { padding-bottom: 0; border-left-color: transparent; }
+
+.timeline li::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--teal);
+}
+
+.timeline time { display: block; font-weight: 600; font-variant-numeric: tabular-nums; }
+.timeline .conf { display: block; font-size: 13px; color: var(--muted); }
+.timeline p { margin: 3px 0 0; max-width: 62ch; }
+
+/* ---------- tables ---------- */
+
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+
+th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 9px 10px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--muted);
+    background: var(--page);
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+    cursor: default;
+}
+
+td { padding: 9px 10px; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+.tablewrap td { white-space: nowrap; vertical-align: middle; }
+tr[style*="pointer"]:hover td, tr.clickable:hover td { background: rgba(14, 124, 134, 0.08); }
+tr.sel td { background: rgba(14, 124, 134, 0.14); }
+
+.tablewrap {
+    max-height: 520px;
+    overflow: auto;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--paper);
+}
+
+.dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin-right: 7px;
+    border-radius: 50%;
+    background: var(--c, var(--muted));
+}
+
+.meter {
+    display: inline-block;
+    position: relative;
+    width: 70px;
+    height: 8px;
+    margin-right: 8px;
+    border-radius: 2px;
+    background: var(--rule-soft);
+    vertical-align: middle;
+    overflow: hidden;
+}
+
+.meter i { position: absolute; inset: 0 auto 0 0; width: var(--w, 0%); background: var(--c, var(--teal)); }
+
+/* ---------- misc ---------- */
+
+.notice {
+    margin: 22px 0 0;
+    padding: 11px 14px;
+    border-left: 4px solid var(--moderate);
+    background: rgba(227, 167, 47, 0.12);
+    font-size: 14px;
+    max-width: 80ch;
+}
+
+.split { display: flex; gap: 3px; height: 14px; max-width: 680px; }
+.split span { min-width: 6px; border-radius: 2px; background: var(--c); }
+.split-legend { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 8px; font-size: 14px; }
+.split-legend b { font-family: var(--font-head); font-size: 17px; margin-right: 4px; }
+
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 22px; margin: 0; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; max-width: 70ch; }
+.warn { color: var(--very-high); font-weight: 600; }
+
+.tools { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+
+.tools input, .tools select {
+    min-height: 40px;
+    padding: 8px 12px;
+    font: inherit;
+    color: var(--text);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+}
+
+.note {
+    margin: 36px 0 0;
+    max-width: 74ch;
+    color: var(--muted);
+    font-size: 13.5px;
+}
+
+/* ---------- narrow screens: sidebar becomes a top bar ---------- */
+
+@media (max-width: 1000px) {
+    .shell { grid-template-columns: 1fr; }
+
+    .rail {
+        position: static;
+        height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 16px 22px;
+        padding: 18px 20px;
+    }
+
+    .nav { grid-auto-flow: column; }
+    .controls { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); flex: 1 1 360px; align-items: end; }
+    #status { flex: 1 1 100%; min-height: 0; }
+    .rail-note { display: none; }
+    .board { grid-template-columns: 1fr; }
+    #map { height: 380px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .gauge .marker { transition: none; }
+}
+
+
+/* ---------- map: dark mode without a second tile provider ---------- */
+
+:root[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.92); }
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.92); }
+}
+
+.map-warning {
+    margin: 8px 0 0;
+    padding: 9px 12px;
+    border-left: 4px solid var(--high);
+    background: rgba(227, 107, 44, 0.12);
+    font-size: 14px;
+}
+
+/* ---------- numbers under the charts and the day-to-day table ---------- */
+
+.caption { margin: -6px 0 10px; min-height: 1.5em; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.caption b { color: var(--text); font-weight: 600; }
+
+.summary { margin-bottom: 18px; overflow-x: auto; }
+.summary table { min-width: 560px; }
+.summary th { position: static; background: transparent; }
+.summary td:first-child { font-weight: 600; white-space: nowrap; }
+.summary td { vertical-align: middle; }
+
+#daily-table { max-height: 420px; }
+#daily-table tr.latest td { background: rgba(14, 124, 134, 0.12); font-weight: 600; }
+#daily-table td:not(:first-child), #daily-table th:not(:first-child) { text-align: right; }

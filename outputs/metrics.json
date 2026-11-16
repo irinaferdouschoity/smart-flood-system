@@ -1,0 +1,72 @@
+{
+  "version": "1.0.0",
+  "trained_at": "2026-11-16T17:28:21Z",
+  "horizon_days": 3,
+  "data_start": "2022-01-01",
+  "data_end": "2026-10-08",
+  "districts": 64,
+  "training_rows": 110952,
+  "flood_warning_rows": 977,
+  "features": 46,
+  "events_in_period": 35,
+  "overall_out_of_fold": {
+    "pr_auc": 0.1506,
+    "roc_auc": 0.9384,
+    "baseline_rain3d_pr_auc": 0.1239,
+    "baseline_rain3d_roc_auc": 0.8985
+  },
+  "alert_threshold_score": 0.1543,
+  "precision_at_threshold": 0.1289,
+  "recall_at_threshold": 0.52,
+  "f2_at_threshold": 0.3236,
+  "false_alert_days_per_district_year": 11.4,
+  "event_district_hit_rate": 0.722,
+  "median_lead_days": 2.0,
+  "per_year": [
+    {
+      "year": 2022,
+      "flood_rows": 170,
+      "pr_auc": 0.4528,
+      "roc_auc": 0.9765,
+      "baseline_rain3d_pr_auc": 0.1845,
+      "baseline_rain3d_roc_auc": 0.9174
+    },
+    {
+      "year": 2023,
+      "flood_rows": 78,
+      "pr_auc": 0.1145,
+      "roc_auc": 0.9566,
+      "baseline_rain3d_pr_auc": 0.1404,
+      "baseline_rain3d_roc_auc": 0.9577
+    },
+    {
+      "year": 2024,
+      "flood_rows": 384,
+      "pr_auc": 0.2375,
+      "roc_auc": 0.9545,
+      "baseline_rain3d_pr_auc": 0.1346,
+      "baseline_rain3d_roc_auc": 0.8841
+    },
+    {
+      "year": 2025,
+      "flood_rows": 63,
+      "pr_auc": 0.007,
+      "roc_auc": 0.7944,
+      "baseline_rain3d_pr_auc": 0.0145,
+      "baseline_rain3d_roc_auc": 0.8627
+    },
+    {
+      "year": 2026,
+      "flood_rows": 282,
+      "pr_auc": 0.2276,
+      "roc_auc": 0.9336,
+      "baseline_rain3d_pr_auc": 0.2396,
+      "baseline_rain3d_roc_auc": 0.888
+    }
+  ],
+  "risk_level_probabilities": {
+    "moderate": 0.0346,
+    "high": 0.0691,
+    "very_high": 0.1383
+  }
+}

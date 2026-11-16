@@ -1,0 +1,17 @@
+{
+  "AG": [
+    "PRECTOTCORR",
+    "T2M",
+    "T2M_MAX",
+    "T2M_MIN",
+    "T2MDEW",
+    "RH2M",
+    "WS2M",
+    "PS",
+    "GWETTOP",
+    "GWETROOT",
+    "GWETPROF",
+    "ALLSKY_SFC_SW_DWN",
+    "IMERG_PRECTOT"
+  ]
+}

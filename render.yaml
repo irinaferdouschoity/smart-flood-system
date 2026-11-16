@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: smart-flood-system
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: AUTO_SYNC_NASA
+        value: "false"
+      - key: BD_AUTO_REFRESH
+        value: "true"
+      - key: BD_REFRESH_HOURS
+        value: "6"
